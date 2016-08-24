@@ -12,11 +12,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/dataTables.bootstrap.css">
     <link rel="stylesheet" href="css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="css/loading.css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
-<div id="demo">
+<div id="demo" class="container">
     <div class="box">
         <div class="box-header"><h3 class="box-title">Basic Table</h3></div>
         <div class="box-body">
@@ -38,6 +39,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="js/jquery-ui.min.js"></script>
 <script src="js/bootstrap-select.js"></script>
+<script src="js/loading-overlay.min.js"></script>
 <script type="x-template" id="grid-template">
     <div class="title">
         <select id="selectcolumn" class="selectpicker" multiple data-live-search="true"
@@ -87,6 +89,7 @@
         <li class="paginate_button next"  :class="{ 'disabled': data.currentPage == data.totalPage}"><a
                 v-on:click="pageing(data.currentPage + 1)"> Next</a></li>
     </ul>
+    <button id="load">load</button>
 </script>
 <script type="text/javascript">
     Vue.directive('inarray',
@@ -209,6 +212,13 @@
         },
         ready: function () {
             this.pageing();
+            $("#load").click(function(){
+                if($("#v-table").hasClass("loading")){
+                    $("#v-table").loadingOverlay("remove");
+                }else{
+                    $("#v-table").loadingOverlay();
+                }
+            });
         },
     })
 
