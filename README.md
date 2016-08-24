@@ -3,6 +3,9 @@
 > a smiple table base on [Vue.js](http://vuejs.org)
 
 ## Description
+
+### [example](https://yoqu.github.io/Vtable/)
+
 **include function** :
 
 * dispaly / hidden table the specified column
@@ -12,7 +15,6 @@
 
 
 ## What use it?
-
 watting append.
 
 
