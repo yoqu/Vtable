@@ -13,8 +13,8 @@ Vtable **include function** :
 
 ***look it*** [example](https://yoqu.github.io/Vtable/)
 ### screenshot
-   ![Vtable](https://raw.githubusercontent.com/yoqu/Vtable/master/docs/v-table.png)
-   ![Vtable](https://raw.githubusercontent.com/yoqu/Vtable/master/docs/v-table2.png)
+   ![Vtable](https://raw.githubusercontent.com/yoqu/Vtable/master/doc/v-table.png)
+   ![Vtable](https://raw.githubusercontent.com/yoqu/Vtable/master/doc/v-table2.png)
 ## dependency
 * **vue.js** render dom.
 * **bootstrap** 
