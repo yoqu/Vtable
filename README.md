@@ -3,16 +3,18 @@
 > a smiple table base on [Vue.js](http://vuejs.org)
 
 ## Description
+If you need a smart/rich table,probably Vtable suit you.
 
-### [example](https://yoqu.github.io/Vtable/)
-
-**include function** :
-
+Vtable **include function** :
 * dispaly / hidden table the specified column
 * drag your column,change column order
-* every filed can ASC or DESC sort.
+* every filed can ASC or DESC sort.(the function dependent backend server)
+* ajax request table data.
 
-
+***look it*** [example](https://yoqu.github.io/Vtable/)
+### screenshot
+   ![Vtable](https://raw.githubusercontent.com/yoqu/Vtable/master/docs/v-table.png)
+   ![Vtable](https://raw.githubusercontent.com/yoqu/Vtable/master/docs/v-table2.png)
 ## dependency
 * **vue.js** render dom.
 * **bootstrap** 
@@ -21,7 +23,7 @@
 * **loading-overlay** ajax request dispaly loading animation
 
 
-## What use it?
+## How use it?
 1. import css js in **html**.
 2. copy index.html grid-table javascript code to your html
 ```
