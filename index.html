@@ -213,6 +213,16 @@
         ready: function () {
             this.pageing();
             $("#load").click(function(){
+
+                $.ajax({
+                    data:"",
+                    dataType:"json",
+                    type:"get",
+                    url:"http://localhost:8080/v1/user",
+                    success:function(data){
+                        console.log(data);
+                    },
+                });
                 if($("#v-table").hasClass("loading")){
                     $("#v-table").loadingOverlay("remove");
                 }else{
