@@ -21,11 +21,12 @@
     <div class="box">
         <div class="box-header"><h3 class="box-title">Basic Table</h3></div>
         <div class="box-body">
-            <demo-grid
+            <v-table
                     :data="gridPage"
-                    :columns.sync="gridColumns"
-                    :filter-key="searchQuery">
-            </demo-grid>
+                    :ax="ax"
+                    :filters="filters"
+                    :columns.sync="gridColumns">
+            </v-table>
         </div>
     </div>
 </div>
@@ -40,12 +41,12 @@
 <script src="js/jquery-ui.min.js"></script>
 <script src="js/bootstrap-select.js"></script>
 <script src="js/loading-overlay.min.js"></script>
-<script type="x-template" id="grid-template">
+<script type="text/x-template" id="grid-table">
     <div class="title">
         <select id="selectcolumn" class="selectpicker" multiple data-live-search="true"
                 data-live-search-placeholder="Search"
-                data-actions-box="true" v-select_column="filters" v-model="filters">
-            <option v-for="key in columns">{{key | capitalize}}</option>
+                data-actions-box="true" v-select_column="sortColumns" v-model="sortColumns">
+            <option v-for="key in columns">{{key}}</option>
         </select>
     </div>
     <table class="dataTable table table-bordered" id="v-table">
@@ -55,12 +56,12 @@
                 <th v-if="sortKey == key"
                     @click="sortBy(key)"
                     :class="sortOrders[key] > 0 ? 'sorting_asc' : 'sorting_desc'"
-                    v-inarray="{data: key,colums:filters}">
+                    v-inarray="{data: key,colums:sortColumns}" th-value="{{key}}">
                     {{key | capitalize}}
                     <i class="fa fa-fw fa-hand-grab-o some-handle pull-right"></i>
                 </th>
                 <th v-else
-                    @click="sortBy(key)" class="sorting" v-inarray="{data: key,colums:filters}">
+                    @click="sortBy(key)" class="sorting" v-inarray="{data: key,colums:sortColumns}" th-value="{{key}}">
                     <i class="fa fa-fw fa-hand-grab-o some-handle pull-right"></i>
                     {{key | capitalize}}
                 </th>
@@ -69,10 +70,8 @@
         </thead>
         <tbody>
         <tr v-for="
-        entry in data.orderGridDtoList
-        | filterBy filterKey
-        | orderBy sortKey sortOrders[sortKey]">
-            <td v-for="key in columns" v-inarray="{data: key,colums:filters}">
+        entry in data.orderGridDtoList">
+            <td v-for="key in columns" v-inarray="{data: key,colums:sortColumns}">
                 {{entry[key]}}
             </td>
         </tr>
@@ -86,199 +85,30 @@
             <a v-on:click="pageing(page.page)" v-if="page.page!=-1">{{ page.page }}</a>
             <a v-else>...</a>
         </li>
-        <li class="paginate_button next"  :class="{ 'disabled': data.currentPage == data.totalPage}"><a
+        <li class="paginate_button next" :class="{ 'disabled': data.currentPage == data.totalPage}"><a
                 v-on:click="pageing(data.currentPage + 1)"> Next</a></li>
     </ul>
-    <button id="load">load</button>
 </script>
+<script src="js/v-table.js"></script>
 <script type="text/javascript">
-    Vue.directive('inarray',
-            function (data) {
-//                console.log(data);
-                var result = $.inArray(data['data'], data['colums']);
-                if (result == -1) {
-                    this.el.style.display = "none";
-                } else {
-                    this.el.style.display = "table-cell";
-                }
-            }
-    )
-    Vue.directive('sortable', {
-        bind: function () {
-//            console.log("bind");
-            $(this.el).sortable({
-                handle: '.some-handle'
-            }).bind('sortupdate', function () {
-                var columns = new Array();
-                $(this).children("th").each(function (i) {
-                    columns[i] = $.trim($(this).text());
-                });
-                demo.gridColumns = columns;
-            });
-        },
-    });
-    Vue.directive('select_column', {
-        twoWay: true,
-        bind: function () {
-            var self = this;
-            $(this.el).on("change", function () {
-                console.log("bind select columns");
-                console.log($(this).val());
-                self.set($(this).val());
-            });
-        },
-    });
-    var table = Vue.component('demo-grid', {
-        template: '#grid-template',
-        props: {
-            data: Object,
-            columns: Array,
-            filterKey: Array,
-        },
-        data: function () {
-            var sortOrders = {}
-            var filters = new Array();
-            var pagenative = new Array();
-            this.columns.forEach(function (key, index) {
-                sortOrders[key] = 1
-                filters[index] = key
-            })
-            return {
-                sortKey: '',
-                sortOrders: sortOrders,
-                filters: filters,
-                pagenative: pagenative
-            }
-        },
-        methods: {
-            bind: function () {
-                binddragTable();
-            },
-            sortBy: function (key) {
-                this.sortKey = key
-                this.sortOrders[key] = this.sortOrders[key] * -1
-            },
-            pageing: function (page) {
-                if (page <= 0 && page > vm.userPage.totalPage) {
-                    return;
-                }
-                console.log("page");
-                this.pagenative = new Array();
-                var hideE = false;
-                var suoyin = 0;
-                for (var index = 0; index < this.data.totalPage; index++) {
-                    if (this.data.totalPage > 6) {
-                        if (index + 1 == this.data.currentPage) {
-                            obj = new Object();
-                            obj.active = true;
-                            obj.page = index + 1;
-                            this.pagenative[suoyin++] = obj;
-                            hideE = false;
-                        } else if (Math.abs(index + 1 - this.data.currentPage) < 3
-                                || index == 0 || index + 1 == this.data.totalPage) {
-                            obj = new Object();
-                            obj.active = false;
-                            obj.page = index + 1;
-                            this.pagenative[suoyin++] = obj;
-                            hideE = false;
-                        } else if (!hideE) {
-                            obj = new Object();
-                            obj.active = false;
-                            obj.page = -1;
-                            this.pagenative[suoyin++] = obj;
-                            hideE = true;
-                        }
-                    } else {
-                        this.pagenative = new Array(this.data.totalPage);
-                        if (index + 1 == this.data.currentPage) {
-                            this.pagenative[index] = {
-                                active: true,
-                                page: index + 1,
-                            }
-                        } else {
-                            this.pagenative[index] = {
-                                active: false,
-                                page: index + 1,
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        watch: {
-            "columns": function (val, oldVal) {
-                $('.selectpicker').selectpicker('refresh');
-            }
-        },
-        ready: function () {
-            this.pageing();
-            $("#load").click(function(){
-
-                $.ajax({
-                    data:"",
-                    dataType:"json",
-                    type:"get",
-                    url:"http://localhost:8080/v1/user",
-                    success:function(data){
-                        console.log(data);
-                    },
-                });
-                if($("#v-table").hasClass("loading")){
-                    $("#v-table").loadingOverlay("remove");
-                }else{
-                    $("#v-table").loadingOverlay();
-                }
-            });
-        },
-    })
 
     var demo = new Vue({
         el: '#demo',
         data: {
-            sortColumns: [],
-            gridColumns: ['Id', 'Name', "FullName", "MobileUserFlag", "AdminUserFlag", "TransporterAdminFlag"],
+            ax: "http://10.210.36.109:8080/v1/user",
+            filters: {
+                page:"0",//init page
+                sortKey:"id",//init
+                sortRule:"DESC",
+            },
+            gridColumns: [ 'name','id', "fullName", "mobileUserFlag", "adminUserFlag", "transporterAdminFlag"],
             gridPage: {
                 currentPage: 1,
                 totalPage: 1,
                 totalRecord: 3,
                 limit: 10,
-                orderGridDtoList: [
-                    {
-                        Id: 2,
-                        Name: "mike",
-                        FullName: "Test FullName",
-                        MobileUserFlag: false,
-                        AdminUserFlag: true,
-                        TransporterAdminFlag: false,
-                    },
-                    {
-                        Id: 5,
-                        Name: "6ike",
-                        FullName: "Aest FullName",
-                        MobileUserFlag: false,
-                        AdminUserFlag: true,
-                        TransporterAdminFlag: false,
-                    },
-                    {
-                        Id: 7,
-                        Name: "6ike",
-                        FullName: "Aest FullName",
-                        MobileUserFlag: false,
-                        AdminUserFlag: true,
-                        TransporterAdminFlag: false,
-                    },
-                    {
-                        Id: 8,
-                        Name: "6ike",
-                        FullName: "Aest FullName",
-                        MobileUserFlag: false,
-                        AdminUserFlag: true,
-                        TransporterAdminFlag: false,
-                    },
-                ]
-
+                orderGridDtoList: []
             }
-
         }
     })
 </script>

@@ -1,0 +1,48 @@
+<script type="text/x-template" id="grid-table">
+    <div class="title">
+        <select id="selectcolumn" class="selectpicker" multiple data-live-search="true"
+                data-live-search-placeholder="Search"
+                data-actions-box="true" v-select_column="sortColumns" v-model="sortColumns">
+            <option v-for="key in columns">{{key}}</option>
+        </select>
+    </div>
+    <table class="dataTable table table-bordered" id="v-table">
+        <thead>
+        <tr v-sortable="columns">
+            <template v-for="key in columns">
+                <th v-if="sortKey == key"
+                    @click="sortBy(key)"
+                    :class="sortOrders[key] > 0 ? 'sorting_asc' : 'sorting_desc'"
+                    v-inarray="{data: key,colums:sortColumns}" th-value="{{key}}">
+                    {{key | capitalize}}
+                    <i class="fa fa-fw fa-hand-grab-o some-handle pull-right"></i>
+                </th>
+                <th v-else
+                    @click="sortBy(key)" class="sorting" v-inarray="{data: key,colums:sortColumns}" th-value="{{key}}">
+                    <i class="fa fa-fw fa-hand-grab-o some-handle pull-right"></i>
+                    {{key | capitalize}}
+                </th>
+            </template>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="
+        entry in data.orderGridDtoList">
+            <td v-for="key in columns" v-inarray="{data: key,colums:sortColumns}">
+                {{entry[key]}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <ul class="pagination pull-right">
+        <li class="paginate_button previous" :class="{ 'disabled': data.currentPage == 1}"><a
+                v-on:click="pageing(data.currentPage - 1)">Previous</a></li>
+        <li v-for="page in pagenative"
+            :class="{ 'active': page.active}" class="paginate_button">
+            <a v-on:click="pageing(page.page)" v-if="page.page!=-1">{{ page.page }}</a>
+            <a v-else>...</a>
+        </li>
+        <li class="paginate_button next" :class="{ 'disabled': data.currentPage == data.totalPage}"><a
+                v-on:click="pageing(data.currentPage + 1)"> Next</a></li>
+    </ul>
+</script>
