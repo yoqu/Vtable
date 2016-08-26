@@ -1,6 +1,7 @@
 /**
  * Created by yoqu on 16/8/25.
  */
+//if data include a Array,set the el display visible,else set display invisible.
 Vue.directive('inarray',
     function (data) {
         var result = $.inArray(data['data'], data['colums']);
@@ -11,6 +12,7 @@ Vue.directive('inarray',
         }
     }
 )
+//bind drag plugin to table.
 Vue.directive('sortable', {
     bind: function () {
         $(this.el).sortable({
@@ -24,6 +26,7 @@ Vue.directive('sortable', {
         });
     },
 });
+//bind select plugin to table
 Vue.directive('select_column', {
     twoWay: true,
     bind: function () {
@@ -38,23 +41,34 @@ Vue.directive('select_column', {
 var table = Vue.component('v-table', {
     template: '#grid-table',
     props: {
-        data: Object,
-        columns: Array,
-        ax: String,
-        filters:Object,
+        data: Object,//table data
+        columns: Array, //columns name
+        ax: String,//ajax url
+        filters: Object,//
     },
     data: function () {
         var sortOrders = {}
         var sortColumns = new Array();
         var pagenative = new Array();
-        this.columns.forEach(function (key, index) {
-            sortOrders[key] = 1
-            sortColumns[index] = key
-        })
-        if(this.filters=="" || this.filters==null){
+        var self = this;
+        var i = 0;
+        outerloop:
+            for (key in this.columns) {
+                sortOrders[this.columns[key]] = 1;
+                if (this.filters['hiddenColumns'] != null && this.filters['hiddenColumns'] != "") {
+                    for (index in this.filters['hiddenColumns']) {
+                        if (this.filters['hiddenColumns'][index] == this.columns[key]) {
+                            // console.log("跳出循环"+this.columns[key]);
+                            continue outerloop;
+                        }
+                    }
+                }
+                sortColumns[i++] = this.columns[key]
+            }
+        if (this.filters == "" || this.filters == null) {
             console.log("filters init null");
-            filters={
-                page:0,
+            this.filters = {
+                page: 0,
             };
         }
         return {
@@ -65,19 +79,22 @@ var table = Vue.component('v-table', {
         }
     },
     methods: {
-        bind: function () {
-            binddragTable();
-        },
         sortBy: function (key) {
-            this.filters['sortKey']=key;
+            this.filters['sortKey'] = key;
             // console.log()
-            if(this.sortOrders[key]!=-1){
-                this.filters['sortRule']="ASC";
-            }else{
-                this.filters["sortRule"]="DESC";
+            if (this.sortOrders[key] != -1) {
+                this.filters['sortRule'] = "ASC";
+            } else {
+                this.filters["sortRule"] = "DESC";
             }
             this.sortKey = key
             this.sortOrders[key] = this.sortOrders[key] * -1
+            this.pageing(this.filters['page']);
+        },
+        search: function () {
+            if(this.filters['search']==null || $.trim(this.filters['search'])=="")
+                return;
+            console.log("page");
             this.pageing(this.filters['page']);
         },
         pageing: function (page) {
@@ -90,15 +107,15 @@ var table = Vue.component('v-table', {
                 return;
             }
             var self = this;
-            var parameters="?vtable-version=1.0";
-            this.filters['page']=page;
-            if(this.filters!=null && this.filters!=""){
-                for(key in this.filters){
-                    parameters+="&"+key+"="+this.filters[key];
+            var parameters = "?vtable-version=1.0";
+            this.filters['page'] = page;
+            if (this.filters != null && this.filters != "") {
+                for (key in this.filters) {
+                    parameters += "&" + key + "=" + this.filters[key];
                 }
             }
             // console.log(parameters);
-            var url = this.ax+parameters;
+            var url = this.ax + parameters;
             $.ajax({
                 dataType: "json",
                 type: "get",
@@ -147,10 +164,10 @@ var table = Vue.component('v-table', {
                         }
                     }
                 },
-                error:function(data){
-                    if(self.ax=="" || self.ax==null){
+                error: function (data) {
+                    if (self.ax == "" || self.ax == null) {
                         alert("Please enter your ajax url.");
-                    }else{
+                    } else {
                         alert("request have a exception,Please confirm enter ajax url correct or logged system?");
                     }
                 },

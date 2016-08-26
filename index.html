@@ -42,12 +42,22 @@
 <script src="js/bootstrap-select.js"></script>
 <script src="js/loading-overlay.min.js"></script>
 <script type="text/x-template" id="grid-table">
-    <div class="title">
-        <select id="selectcolumn" class="selectpicker" multiple data-live-search="true"
-                data-live-search-placeholder="Search"
-                data-actions-box="true" v-select_column="sortColumns" v-model="sortColumns">
-            <option v-for="key in columns">{{key}}</option>
-        </select>
+    <div class="title row">
+        <div class="col-xs-9">
+            <select id="selectcolumn" class="selectpicker" multiple data-live-search="true"
+                    data-live-search-placeholder="Search"
+                    data-actions-box="true" v-select_column="sortColumns" v-model="sortColumns">
+                <option v-for="key in columns">{{key}}</option>
+            </select>
+        </div>
+        <div class="col-xs-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for..." v-model="filters.search">
+                <span class="input-group-btn">
+        <button class="btn btn-default" type="button" v-on:click="search">Select</button>
+      </span>
+            </div><!-- /input-group -->
+        </div>
     </div>
     <table class="dataTable table table-bordered" id="v-table">
         <thead>
@@ -95,13 +105,14 @@
     var demo = new Vue({
         el: '#demo',
         data: {
-            ax: "user.json",//"http://10.210.36.109:8080/v1/user",
+            ax: /*"user.json",*/"http://10.210.36.126:8080/v1/user",
             filters: {
-                page:"0",//init page
-                sortKey:"id",//init
-                sortRule:"DESC",
+                page: "0",//init page
+                sortKey: "id",//init
+                sortRule: "DESC",
+                hiddenColumns: ["name", "id"],
             },
-            gridColumns: [ 'name','id', "fullName", "mobileUserFlag", "adminUserFlag", "transporterAdminFlag"],
+            gridColumns: ['name', 'id', "fullName", "mobileUserFlag", "adminUserFlag", "transporterAdminFlag"],
             gridPage: {
                 currentPage: 1,
                 totalPage: 1,
