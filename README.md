@@ -10,6 +10,7 @@ Vtable **include function** :
 * drag your column,change column order
 * every filed can ASC or DESC sort.(the function dependent backend server)
 * ajax request table data.
+* ajax search the data
 
 ***look it*** [example](https://yoqu.github.io/Vtable/)
 ### screenshot
@@ -44,23 +45,23 @@ Vtable **include function** :
 
 3. write js in  project.
 ```
-new Vue({
+  var demo = new Vue({
         el: '#demo',
         data: {
-            sortColumns: [],
-            ax: "http://10.210.36.109:8080/v1/user",//ajax request url.
-            filters: { //request's parameters
-                page:"0",//init page
-                sortKey:"id",//init
-                sortRule:"DESC",
+            ax: "user.json",//ajax url
+            filters: {
+                page: "0",//init page
+                sortKey: "id",//init
+                sortRule: "DESC",//sort rule DESC or ASC
+                hiddenColumns: ["name", "id"],//hidden the columns.
             },
-            gridColumns: [ 'name','id', "fullName", "mobileUserFlag", "adminUserFlag", "transporterAdminFlag"],//table column order
+            gridColumns: ['name', 'id', "fullName", "mobileUserFlag", "adminUserFlag", "transporterAdminFlag"],
             gridPage: {
                 currentPage: 1,
                 totalPage: 1,
                 totalRecord: 3,
                 limit: 10,
-                orderGridDtoList: []//datas ,the data key must include gridColumns values.
+                orderGridDtoList: []//the data array
             }
         }
     })

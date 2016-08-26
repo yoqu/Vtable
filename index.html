@@ -54,11 +54,12 @@
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search for..." v-model="filters.search">
                 <span class="input-group-btn">
-        <button class="btn btn-default" type="button" v-on:click="search">Select</button>
+        <button class="btn btn-default" type="button" v-on:click="search">Search</button>
       </span>
             </div><!-- /input-group -->
         </div>
     </div>
+    <button v-on:click="model">model</button>
     <table class="dataTable table table-bordered" id="v-table">
         <thead>
         <tr v-sortable="columns">
@@ -101,16 +102,15 @@
 </script>
 <script src="js/v-table.js"></script>
 <script type="text/javascript">
-
     var demo = new Vue({
         el: '#demo',
         data: {
-            ax: /*"user.json",*/"http://10.210.36.126:8080/v1/user",
+            ax: "user.json",//ajax url
             filters: {
                 page: "0",//init page
                 sortKey: "id",//init
-                sortRule: "DESC",
-                hiddenColumns: ["name", "id"],
+                sortRule: "DESC",//sort rule DESC or ASC
+                hiddenColumns: ["name", "id"],//hidden the columns.
             },
             gridColumns: ['name', 'id', "fullName", "mobileUserFlag", "adminUserFlag", "transporterAdminFlag"],
             gridPage: {
@@ -118,7 +118,7 @@
                 totalPage: 1,
                 totalRecord: 3,
                 limit: 10,
-                orderGridDtoList: []
+                orderGridDtoList: []//the data array
             }
         }
     })
