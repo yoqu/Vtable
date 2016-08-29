@@ -1,5 +1,6 @@
 /**
  * Created by yoqu on 16/8/25.
+ * github url: https://github.com/yoqu/Vtable
  */
 //if data include a Array,set the el display visible,else set display invisible.
 Vue.directive('inarray',
@@ -32,8 +33,8 @@ Vue.directive('select_column', {
     bind: function () {
         var self = this;
         $(this.el).on("change", function () {
-            console.log("bind select columns");
-            console.log($(this).val());
+            // console.log("bind select columns");
+            // console.log($(this).val());
             self.set($(this).val());
         });
     },
@@ -99,7 +100,49 @@ var table = Vue.component('v-table', {
             this.pageing(this.filters['page']);
         },
         modal:function(){
-            $("#add-modal").modal();
+            $("#add-modal").modal({backdrop: 'static', keyboard: false});
+        },
+        save:function(){//save a form entity.
+            var result=new Object();
+            for(key in this.fields){
+                result[key]=this.fields[key]['value'];
+            }
+
+            var url=this.ax;
+            $.ajax({
+                dataType: "json",
+                type: "post",
+                url: url,
+                beforeSend: function () {
+                    $(".modal-content").loadingOverlay({
+                        loadingText: 'waiting'
+                    });
+                },
+                complete: function (XMLHttpRequest, status) {
+                    $(".modal-content").loadingOverlay("remove");
+                    if (status == 'timeout') { // 超时,status还有success,error等值的情况
+                        alert("time out");
+                    }
+                },
+                success:function(data){
+                    if(data['result']!==null || datap['result']==""){
+                        alert("data error");
+                        return ;
+                    }
+                    $("#add-modal").modal("toggle");
+                }
+            });
+        },
+        remove:function(id){
+          if(id==null || id==""){
+              alert("id not empty.");
+              return ;
+          }
+          console.log(this.$el);
+        },
+        update:function(id){
+            console.log("update");
+            $("#add-modal").modal({backdrop: 'static', keyboard: false});
         },
         pageing: function (page) {
             //if page not correct return ;

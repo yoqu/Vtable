@@ -107,6 +107,7 @@
   animation: loadingStart 3s 300ms linear 1 both;
   background: rgba(255, 255, 255, 0.6);
   text-align: center;
+  z-index: 9999;
 }
  .loading .loading-text {
   font-size: 0.875rem;

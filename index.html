@@ -89,9 +89,9 @@
             </td>
             <td>
                 <div class="btn-group">
-                    <button type="button" class="btn btn-info btn-sm"><i
+                    <button type="button" class="btn btn-info btn-sm" v-on:click="update(entry.id)"><i
                             class="glyphicon glyphicon-edit bigger-120"></i></button>
-                    <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm" v-on:click="remove(entry.id)"><i class="fa fa-trash-o"></i></button>
                 </div>
             </td>
 
@@ -109,7 +109,7 @@
         <li class="paginate_button next" :class="{ 'disabled': data.currentPage == data.totalPage}"><a
                 v-on:click="pageing(data.currentPage + 1)"> Next</a></li>
     </ul>
-    <div class="modal fade" id="add-modal" >
+    <div class="modal fade" id="add-modal">
         <div class="modal-dialog ">
             <div class="modal-content ">
                 <div class="modal-header">
@@ -121,15 +121,26 @@
                     <div class="col-sm-6 col-xs-12" v-for="field in fields">
                         <div class="form-group" v-if="field.type=='input'">
                             <label for="{{field.text}}">{{field.text}}</label>
-                            <input type="email" class="form-control" id="{{field.text}}" v-if="field.status=='disabled'" disabled v-model="field.value">
+                            <input type="email" class="form-control" id="{{field.text}}" v-if="field.status=='disabled'"
+                                   disabled v-model="field.value">
                             <input type="email" class="form-control" id="{{field.text}}" v-else v-model="field.value">
                         </div>
                         <div class="form-group" v-if="field.type=='select'">
                             <label for="{{field.text}}">{{field.text}}</label>
-                            <select class="form-control" id="{{field.text}}" v-model="field.value" v-if="field.status=='disabled'" disabled>
+                            <select class="selectpicker"  data-live-search="true" id="{{field.text}}" v-select_column="field.value"
+                                    v-if="field.status=='disabled'" disabled>
                                 <option value="{{select.value}}" v-for="select in field.data">{{select.text}}</option>
                             </select>
-                            <select class="form-control" id="{{field.text}}" v-model="field.value" v-else>
+                            <select class="selectpicker" data-live-search="true" id="{{field.text}}" v-select_column="field.value" v-else>
+                                <option value="{{select.value}}" v-for="select in field.data">{{select.text}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group" v-if="field.type=='checkBox'">
+                            <label for="{{field.text}}">{{field.text}}</label>
+                            <select class="selectpicker" multiple v-select_column="field.value" v-if="field.status=='disabled'" disabled>
+                                <option value="{{select.value}}" v-for="select in field.data">{{select.text}}</option>
+                            </select>
+                            <select class="selectpicker" multiple v-select_column="field.value" v-else>
                                 <option value="{{select.value}}" v-for="select in field.data">{{select.text}}</option>
                             </select>
                         </div>
@@ -137,8 +148,8 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" v-on:click="save">Save</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -149,7 +160,7 @@
     var demo = new Vue({
         el: '#demo',
         data: {
-            ax: "user.json",//ajax url
+            ax: "http://10.210.36.140:8080/v1/user",//ajax url
             filters: {
                 page: "0",//init page
                 sortKey: "id",//init
@@ -159,33 +170,53 @@
             fields: {
                 name: {
                     type: "input",
-                    text:"Name",
-                    status:"normal",
+                    text: "Name",
+                    status: "normal",
                 },
                 id: {
                     type: "input",
-                    status:"normal",
-                    text:"Id",
+                    status: "normal",
+                    text: "Id",
                 },
                 fullName: {
                     type: "input",
-                    status:"normal",
-                    text:"FullName"
+                    status: "normal",
+                    text: "FullName"
                 },
                 mobileUserFlag: {
-                    type:"select",
-                    status:"normal",
-                    data:[
+                    type: "select",
+                    status: "normal",
+                    data: [
                         {
-                            value:"1",
-                            text:"select1"
-                        },{
-                            value:"2",
-                            text:"select2"
+                            value: "1",
+                            text: "select1"
+                        }, {
+                            value: "2",
+                            text: "select2"
                         }
                     ],
-                    text:"MobileUserFlag"
+                    text: "MobileUserFlag"
                 },
+                checkBox: {
+                    text:"CheckBox",
+                    type: "checkBox",
+                    status: "normal",
+                    data: [
+                        {
+                            text: "c1",
+                            value: 1,
+                        },
+                        {
+                            text: "c2",
+                            value: 3,
+                        },
+                        {
+                            text: "c3",
+                            value: 6,
+                        }
+                    ],
+                    value: []
+                }
             },
             gridColumns: ['name', 'id', "fullName", "mobileUserFlag", "adminUserFlag", "transporterAdminFlag"],
             gridPage: {
