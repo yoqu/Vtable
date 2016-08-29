@@ -45,6 +45,7 @@ var table = Vue.component('v-table', {
         columns: Array, //columns name
         ax: String,//ajax url
         filters: Object,//
+        fields:Object,
     },
     data: function () {
         var sortOrders = {}
@@ -96,6 +97,9 @@ var table = Vue.component('v-table', {
                 return;
             console.log("page");
             this.pageing(this.filters['page']);
+        },
+        modal:function(){
+            $("#add-modal").modal();
         },
         pageing: function (page) {
             //if page not correct return ;

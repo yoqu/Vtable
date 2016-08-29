@@ -25,6 +25,7 @@
                     :data="gridPage"
                     :ax="ax"
                     :filters="filters"
+                    :fields="fields"
                     :columns.sync="gridColumns">
             </v-table>
         </div>
@@ -42,6 +43,7 @@
 <script src="js/bootstrap-select.js"></script>
 <script src="js/loading-overlay.min.js"></script>
 <script type="text/x-template" id="grid-table">
+    <button v-on:click="modal" class="btn btn-primary">Add</button>
     <div class="title row">
         <div class="col-xs-9">
             <select id="selectcolumn" class="selectpicker" multiple data-live-search="true"
@@ -59,7 +61,6 @@
             </div><!-- /input-group -->
         </div>
     </div>
-    <button v-on:click="model">model</button>
     <table class="dataTable table table-bordered" id="v-table">
         <thead>
         <tr v-sortable="columns">
@@ -77,6 +78,7 @@
                     {{key | capitalize}}
                 </th>
             </template>
+            <th>Operation</th>
         </tr>
         </thead>
         <tbody>
@@ -85,6 +87,14 @@
             <td v-for="key in columns" v-inarray="{data: key,colums:sortColumns}">
                 {{entry[key]}}
             </td>
+            <td>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info btn-sm"><i
+                            class="glyphicon glyphicon-edit bigger-120"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>
+                </div>
+            </td>
+
         </tr>
         </tbody>
     </table>
@@ -99,6 +109,40 @@
         <li class="paginate_button next" :class="{ 'disabled': data.currentPage == data.totalPage}"><a
                 v-on:click="pageing(data.currentPage + 1)"> Next</a></li>
     </ul>
+    <div class="modal fade" id="add-modal" >
+        <div class="modal-dialog ">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="col-sm-6 col-xs-12" v-for="field in fields">
+                        <div class="form-group" v-if="field.type=='input'">
+                            <label for="{{field.text}}">{{field.text}}</label>
+                            <input type="email" class="form-control" id="{{field.text}}" v-if="field.status=='disabled'" disabled v-model="field.value">
+                            <input type="email" class="form-control" id="{{field.text}}" v-else v-model="field.value">
+                        </div>
+                        <div class="form-group" v-if="field.type=='select'">
+                            <label for="{{field.text}}">{{field.text}}</label>
+                            <select class="form-control" id="{{field.text}}" v-model="field.value" v-if="field.status=='disabled'" disabled>
+                                <option value="{{select.value}}" v-for="select in field.data">{{select.text}}</option>
+                            </select>
+                            <select class="form-control" id="{{field.text}}" v-model="field.value" v-else>
+                                <option value="{{select.value}}" v-for="select in field.data">{{select.text}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </script>
 <script src="js/v-table.js"></script>
 <script type="text/javascript">
@@ -111,6 +155,37 @@
                 sortKey: "id",//init
                 sortRule: "DESC",//sort rule DESC or ASC
                 hiddenColumns: ["name", "id"],//hidden the columns.
+            },
+            fields: {
+                name: {
+                    type: "input",
+                    text:"Name",
+                    status:"normal",
+                },
+                id: {
+                    type: "input",
+                    status:"normal",
+                    text:"Id",
+                },
+                fullName: {
+                    type: "input",
+                    status:"normal",
+                    text:"FullName"
+                },
+                mobileUserFlag: {
+                    type:"select",
+                    status:"normal",
+                    data:[
+                        {
+                            value:"1",
+                            text:"select1"
+                        },{
+                            value:"2",
+                            text:"select2"
+                        }
+                    ],
+                    text:"MobileUserFlag"
+                },
             },
             gridColumns: ['name', 'id', "fullName", "mobileUserFlag", "adminUserFlag", "transporterAdminFlag"],
             gridPage: {
