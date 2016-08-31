@@ -39,6 +39,14 @@ Vue.directive('select_column', {
         });
     },
 });
+Vue.directive("datepicker",{
+    bind:function(){
+        $(this.el).datepicker({
+            autoclose: true
+        });
+    },
+})
+
 var table = Vue.component('v-table', {
     template: '#grid-table',
     props: {

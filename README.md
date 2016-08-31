@@ -34,26 +34,84 @@ Vtable **include function** :
 ```
 3. import template file to your html(/v-table-template.html)
 ```
-<v-table
-    :data="gridPage"
-    :ax="ax"
-    :filters="filters"
-    :columns.sync="gridColumns">
+ <v-table
+                    :data="gridPage" 
+                    :ax="ax"
+                    :filters="filters"
+                    :fields="fields" <!--this field use to add table modal.-->
+                    :columns.sync="gridColumns">
             </v-table>
 
 ```
 
 3. write js in  project.
 ```
-  var demo = new Vue({
+var demo = new Vue({
         el: '#demo',
         data: {
-            ax: "user.json",//ajax url
+            ax: "user.json",//"http://10.210.36.132:8080/v1/user",//ajax url
             filters: {
                 page: "0",//init page
                 sortKey: "id",//init
                 sortRule: "DESC",//sort rule DESC or ASC
                 hiddenColumns: ["name", "id"],//hidden the columns.
+            },
+            fields: {
+                name: {
+                    type: "input",
+                    text: "Name",
+                    status: "normal",
+                },
+                 time: {
+                    type: "datepicker",
+                    text: "Date select",
+                    status: "normal",
+                },
+
+                id: {
+                    type: "input",
+                    status: "normal",
+                    text: "Id",
+                },
+                fullName: {
+                    type: "input",
+                    status: "normal",
+                    text: "FullName"
+                },
+                mobileUserFlag: {
+                    type: "select",
+                    status: "normal",
+                    data: [
+                        {
+                            value: "1",
+                            text: "select1"
+                        }, {
+                            value: "2",
+                            text: "select2"
+                        }
+                    ],
+                    text: "MobileUserFlag"
+                },
+                checkBox: {
+                    text:"CheckBox",
+                    type: "checkBox",
+                    status: "normal",
+                    data: [
+                        {
+                            text: "c1",
+                            value: 1,
+                        },
+                        {
+                            text: "c2",
+                            value: 3,
+                        },
+                        {
+                            text: "c3",
+                            value: 6,
+                        }
+                    ],
+                    value: []
+                }
             },
             gridColumns: ['name', 'id', "fullName", "mobileUserFlag", "adminUserFlag", "transporterAdminFlag"],
             gridPage: {
@@ -66,5 +124,6 @@ Vtable **include function** :
         }
     })
 ```
+config fields,you can define custom field to the form.
 
 > power design : [yoqu](http://www.yoqu.org)
